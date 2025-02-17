@@ -146,11 +146,11 @@ function App() {
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/askai" element={<Askai />} />
             <Route path="/prescription" element={<Prescription />} />
-            <Route path="/doctors" element={<Doctors />} />
-            <Route path="/bed" element={<Bed />} />
+            <Route path="/doctors/&/Clinics" element={<Doctors />} />
+            <Route path="/bed/Allotment" element={<Bed />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/history" element={<History />} />
-            <Route path="/cam" element={<Campaign />} />
+            <Route path="/campaign" element={<Campaign />} />
 
           </Route>
           <Route path="/login" element={<Login />} />
