@@ -8,6 +8,7 @@ import Textbox from "../components/Textbox";
 import Button from "../components/Button";
 // import { toast } from "react-toastify";
 import { setCredentials } from "../redux/slices/authSlice";
+import logo from "../assets/356f9afdfc8c3aba9175eebc060fc117.png";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
@@ -34,7 +35,7 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {  
+  useEffect(() => {
     if (user) navigate("/appointment");
   }, [user, navigate]);
 
@@ -43,7 +44,12 @@ const Login = () => {
       <div className='w-full md:w-auto flex gap-0 md:gap-40 flex-col md:flex-row items-center justify-center'>
         {/* Left Side */}
         <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
-          <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-5 md:gap-y-10 2xl:-mt-20'>
+          <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-3 md:gap-y-10 2xl:-mt-20'>
+           
+            <h1 className='flex gap-1 items-center'>
+              <img src={logo} alt="Logo" className="w-40 h-42 rounded-full" />
+            </h1>
+
             <span className='flex gap-1 py-1 px-3 border rounded-full text-sm md:text-base border-gray-300 text-gray-600'>
               Manage all your tasks in one place!
             </span>
