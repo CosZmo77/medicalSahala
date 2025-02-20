@@ -31,7 +31,9 @@ import History from "./components/History";
 import Sidebar from "./components/Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
-
+import AppointmentForm from "./components/AppointmentForm";
+import AppointmentDetails from "./components/AppointmentDetails";
+import APayment from "./components/APayment"
 function Layout() {
   const { user } = useSelector((state) => state.auth);
 
@@ -64,7 +66,7 @@ function Layout() {
       <MobileSidebar />
       <div className='flex-1 overflow-y-auto'>
         <Navbar />
-        <div className='p-4 2x1:px-10'>
+        <div className='p-2 2x1:px-10'>
           <Outlet />
         </div>
       </div>
@@ -155,6 +157,10 @@ function App() {
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
+
+          <Route path="/Aform" element={<AppointmentForm />} />
+          <Route path="/Apayment" element={<APayment />} />
+          <Route path="/Adetails" element={<AppointmentDetails/>} />
         </Routes>
 
         <Toaster richColors />
