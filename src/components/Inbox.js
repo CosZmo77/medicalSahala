@@ -24,6 +24,7 @@ const Inbox = () => {
   };
 
   return (
+    
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar (Patient List) */}
       <div className={`w-full md:w-1/4 border-r bg-white flex flex-col h-screen ${selectedPatient ? "hidden md:flex" : "flex"}`}>
