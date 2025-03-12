@@ -14,7 +14,6 @@ import clsx from "clsx";
 import { Fragment, useRef } from "react";
 import { Transition } from "@headlessui/react";
 import Login from "./components/login";
-import SignUp from "./components/register";
 import { Toaster } from "sonner";
 // import { useState } from "react";
 // import { auth } from "./components/firebase";
@@ -34,6 +33,7 @@ import Navbar from "./components/Navbar";
 import AppointmentForm from "./components/AppointmentForm";
 import AppointmentDetails from "./components/AppointmentDetails";
 import APayment from "./components/APayment"
+import Register from "./components/register";
 function Layout() {
   const { user } = useSelector((state) => state.auth);
 
@@ -72,7 +72,7 @@ function Layout() {
       </div>
     </div>
   ) : (
-    <Navigate to='/login' state={{ from: location }} replace />
+    <Navigate to='/register' state={{ from: location }} replace />
   );
 }
 
@@ -156,7 +156,7 @@ function App() {
 
           </Route>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<SignUp />} />
+          <Route path="/register" element={<Register />} />
 
           <Route path="/Aform" element={<AppointmentForm />} />
           <Route path="/Apayment" element={<APayment />} />

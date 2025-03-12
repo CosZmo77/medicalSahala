@@ -29,9 +29,12 @@ const Login = () => {
         data.password
       );
       dispatch(setCredentials(userCredential.user));
+
       // navigate("/appointment");
     } catch (error) {
       console.log("error");
+      alert("wrong inputs")
+
     }
   };
 
@@ -45,7 +48,7 @@ const Login = () => {
         {/* Left Side */}
         <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
           <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-3 md:gap-y-10 2xl:-mt-20'>
-           
+
             <h1 className='flex gap-1 items-center'>
               <img src={logo} alt="Logo" className="w-40 h-42 rounded-full" />
             </h1>
