@@ -1,23 +1,29 @@
-
-
-
-import {getAuth} from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import {getFirestore} from "firebase/firestore";
-
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBBmNQ8goJFk1EdxgifBzbcDPhFuZZyn1s",
-  authDomain: "login-auth-7f973.firebaseapp.com",
-  projectId: "login-auth-7f973",
-  storageBucket: "login-auth-7f973.firebasestorage.app",
-  messagingSenderId: "146619101663",
-  appId: "1:146619101663:web:98169051deceaf1168546a",
-  measurementId: "G-YV4020YGGV"
+  apiKey: "AIzaSyC22ewUwHkPTsN4gv3QHc_Y_DeuPiQaawA",
+  authDomain: "medicalshala-new01.firebaseapp.com",
+  projectId: "medicalshala-new01",
+  storageBucket: "medicalshala-new01.firebasestorage.app",
+  messagingSenderId: "711967624299",
+  appId: "1:711967624299:web:cdbefea2231276a787b52e",
+  measurementId: "G-Q4HKVMX7RQ",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth=getAuth();
-export const db=getFirestore(app);
+
+// Initialize services
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Initialize providers
+export const googleAuthProvider = new GoogleAuthProvider();
+// Configure Google provider (optional additional settings)
+// googleAuthProvider.setCustomParameters({
+//   prompt: 'select_account'
+// });
+
 export default app;

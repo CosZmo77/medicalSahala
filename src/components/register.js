@@ -1,21 +1,29 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import React, { useState, useEffect } from "react";
-import { auth, db } from "./firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { auth, googleAuthProvider } from "./firebase";
 import logo from "../assets/356f9afdfc8c3aba9175eebc060fc117.png";
-import { setCredentials } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
+// import { setCredentials } from "../redux/slices/authSlice"; // Adjust the path based on your project structure
+import { Link } from "react-router-dom";
+import { FaEye, FaEyeSlash, FaApple } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import ellips2 from "../assets/Ellipse 77.png";
+import ellips1 from "../assets/Ellipse 76.png";
 
 function Register() {
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [specialization, setSpecialization] = useState("");
+  const [hospitalName, setHospitalName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -23,24 +31,78 @@ function Register() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords don't match");
+      return;
+    }
+
+    if (!termsAccepted) {
+      setError("Please accept the terms and conditions");
+      return;
+    }
+
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      setLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-      if (user) {
-        await setDoc(doc(db, "Users", user.uid), {
-          email: user.email,
-          firstName: fname,
-          lastName: lname,
-          photo: ""
-        });
+      if (userCredential.user) {
+        console.log("User registered successfully:", userCredential.user);
 
-        dispatch(setCredentials({ uid: user.uid, email: user.email, firstName: fname, lastName: lname }));
+        // Skip Firestore database operations
 
-        // navigate("/appointment");  // Redirect after successful registration
+        // If needed, you can still dispatch to Redux store
+        // dispatch(
+        //   setCredentials({
+        //     uid: userCredential.user.uid,
+        //     email: userCredential.user.email,
+        //   })
+        // );
+
+        navigate("/appointment");
       }
     } catch (error) {
-      console.log(error.message);
-      alert("wrong inputs")
+      console.error("Registration failed:", error.message);
+      setError("Registration failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const result = await signInWithPopup(auth, googleAuthProvider);
+
+      if (result.user) {
+        console.log("User signed up with Google:", result.user);
+
+        // Skip Firestore database operations
+
+        // If needed, you can still dispatch to Redux store
+        // dispatch(
+        //   setCredentials({
+        //     uid: result.user.uid,
+        //     email: result.user.email,
+        //     displayName: result.user.displayName,
+        //     photoURL: result.user.photoURL,
+        //   })
+        // );
+
+        navigate("/appointment");
+      }
+    } catch (error) {
+      console.error("Google sign-up failed:", error.message);
+      setError("Google sign-up failed: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,92 +111,202 @@ function Register() {
   }, [user, navigate]);
 
   return (
-    <div className='w-full min-h-screen flex items-center justify-center flex-col lg:flex-row bg-[#f3f4f6]'>
-      <div className='w-full md:w-auto flex gap-0 md:gap-40 flex-col md:flex-row items-center justify-center'>
-        <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
-          <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-3 md:gap-y-10 2xl:-mt-20'>
-            <h1 className='flex gap-1 items-center'>
-              <img src={logo} alt="Logo" className="w-40 h-42 rounded-full" />
-            </h1>
-            <span className='flex gap-1 py-1 px-3 border rounded-full text-sm md:text-base border-gray-300 text-gray-600'>
-              Manage all your tasks in one place!
-            </span>
-            <p className='flex flex-col gap-0 md:gap-4 text-3xl md:text-4xl 2xl:text-6xl font-black text-center text-blue-700'>
-              <span>Revolutionise Healthcare</span>
-              <span>Management Effortlessly!</span>
-            </p>
-            <span className='flex text-center leading-normal md:leading-relaxed py-1 px-3 text-xl md:text-xl border-gray-300 text-gray-600'>
-              Effortlessly manage appointments, health records, and patient interactions with our all-in-one healthcare management platform.
-            </span>
-          </div>
+    <div className="flex min-h-screen bg-white">
+      {/* Left Side - details */}
+      <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col">
+        <div className="flex justify-center mb-4">
+          <img
+            src={logo}
+            alt="MedicalShala Logo"
+            className="h-[72px] w-[250px]"
+          />
         </div>
 
-        <div className='w-full md:w-1/3 p-4 md:p-1 flex flex-col justify-center items-center'>
-          <form
-            onSubmit={handleRegister}
-            className='form-container w-full md:w-[400px] flex flex-col gap-y-8 bg-white px-8 pt-10 pb-10'
-          >
-            <div>
-              <p className='text-blue-600 text-3xl font-bold text-center'>Sign Up</p>
-            </div>
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold text-[#0078D4]">
+            Join Our Healthcare Network
+          </h2>
+          <p className="text-gray-600">Register to Continue</p>
+        </div>
 
-            <div className='flex flex-col gap-y-5'>
-              <div>
-                <label className='block text-gray-700 font-semibold'>First Name</label>
-                <input
-                  type='text'
-                  className='w-full rounded-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  placeholder='First name'
-                  onChange={(e) => setFname(e.target.value)}
-                  required
-                />
-              </div>
+        {/* Display error message if any */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
 
-              <div>
-                <label className='block text-gray-700 font-semibold'>Last Name</label>
-                <input
-                  type='text'
-                  className='w-full rounded-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  placeholder='Last name'
-                  onChange={(e) => setLname(e.target.value)}
-                />
-              </div>
+        <form onSubmit={handleRegister} className="max-w-md mx-auto w-full">
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
 
-              <div>
-                <label className='block text-gray-700 font-semibold'>Email Address</label>
-                <input
-                  type='email'
-                  className='w-full rounded-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  placeholder='Enter email'
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+            <input
+              type="text"
+              placeholder="Specialization"
+              className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={specialization}
+              onChange={(e) => setSpecialization(e.target.value)}
+              required
+            />
 
-              <div>
-                <label className='block text-gray-700 font-semibold'>Password</label>
-                <input
-                  type='password'
-                  className='w-full rounded-full px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  placeholder='Enter password'
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+            <input
+              type="text"
+              placeholder="Hospital's / Clinic's Name"
+              className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={hospitalName}
+              onChange={(e) => setHospitalName(e.target.value)}
+              required
+            />
 
+            <input
+              type="email"
+              placeholder="Email"
+              className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
               <button
-                type='submit'
-                className='w-full h-10 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition duration-300'
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                Sign Up
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
-            <p className='text-sm text-gray-500 text-center mt-4'>
-              Already registered?{' '}
-              <Link to='/login' className='text-blue-600 hover:underline'>Login</Link>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                className="w-full px-4 py-2 rounded-xl border border-[#585858] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mr-2"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                required
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600">
+                I agree to the{" "}
+                <Link to="/terms" className="text-[#0078D4]">
+                  Terms & Conditions
+                </Link>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 bg-[#0078D4] text-white rounded-xl font-medium hover:bg-blue-700 transition duration-300 disabled:bg-blue-300"
+            >
+              {loading ? "Registering..." : "Register Now"}
+            </button>
+          </div>
+
+          <div className="mt-6 text-center relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[#585858]"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-4 text-sm text-gray-500">
+                Or Sign Up with
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-row justify-center gap-4">
+            <button
+              type="button"
+              disabled={loading}
+              className="flex justify-center items-center px-14 py-2 border border-[#585858] rounded-xl hover:bg-gray-50 disabled:bg-gray-100"
+              onClick={handleGoogleSignUp}
+            >
+              <FcGoogle className="h-7 w-7" />
+            </button>
+
+            <button
+              type="button"
+              disabled={loading}
+              className="flex justify-center items-center px-14 py-2 border border-[#585858] rounded-xl hover:bg-gray-50 disabled:bg-gray-100"
+            >
+              <FaApple className="h-7 w-7" />
+            </button>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">
+              Already have an Account?
+              <Link to="/login" className="text-[#0078D4] ml-1 font-medium">
+                Sign In
+              </Link>
             </p>
-          </form>
+          </div>
+        </form>
+      </div>
+
+      {/* RightScreen - blue */}
+      <div className="w-full hidden md:flex md:w-1/2 bg-gradient-to-b from-[#1B3C62] to-[#377AC8] items-center justify-center p-12 relative overflow-hidden">
+        <img
+          src={ellips1}
+          alt="elips1"
+          className="w-96 h-80 absolute bottom-0 right-0"
+        />
+        <img
+          src={ellips2}
+          alt="elips2"
+          className="w-52 h-40 absolute bottom-0 right-0"
+        />
+        <div className="relative z-10 text-white max-w-md ">
+          <h1 className="text-4xl font-bold mb-6">
+            Streamline Your Practice with Ease!
+          </h1>
+          <p className="text-xl">
+            Simplify your workflow, manage patient data, and enhance
+            communication—all in one comprehensive platform tailored for
+            doctors.
+          </p>
         </div>
       </div>
     </div>

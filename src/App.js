@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
   useLocation,
-  Outlet
+  Outlet,
 } from "react-router-dom";
 
 import { IoClose } from "react-icons/io5";
@@ -32,11 +32,10 @@ import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./components/Navbar";
 import AppointmentForm from "./components/AppointmentForm";
 import AppointmentDetails from "./components/AppointmentDetails";
-import APayment from "./components/APayment"
+import APayment from "./components/APayment";
 import Register from "./components/register";
 function Layout() {
   const { user } = useSelector((state) => state.auth);
-
 
   // const [user, setUser] = useState();
   // const [loading, setLoading] = useState(true);
@@ -51,7 +50,6 @@ function Layout() {
   //   return () => unsubscribe();
   // }, []);
 
-
   // // Show a loading screen until auth state is determined
   // if (loading) {
   //   return <div>Loading...</div>;
@@ -64,18 +62,17 @@ function Layout() {
         <Sidebar />
       </div>
       <MobileSidebar />
-      <div className='flex-1 overflow-y-auto'>
+      <div className="flex-1 overflow-y-auto">
         <Navbar />
-        <div className='p-2 2x1:px-10'>
+        <div className="p-2 2x1:px-10">
           <Outlet />
         </div>
       </div>
     </div>
   ) : (
-    <Navigate to='/register' state={{ from: location }} replace />
+    <Navigate to="/login" state={{ from: location }} replace />
   );
 }
-
 
 const MobileSidebar = () => {
   const { isSidebarOpen } = useSelector((state) => state.auth);
@@ -91,12 +88,12 @@ const MobileSidebar = () => {
       <Transition
         show={isSidebarOpen}
         as={Fragment}
-        enter='transition-opacity duration-700'
-        enterFrom='opacity-x-10'
-        enterTo='opacity-x-100'
-        leave='transition-opacity duration-700'
-        leaveFrom='opacity-x-100'
-        leaveTo='opacity-x-0'
+        enter="transition-opacity duration-700"
+        enterFrom="opacity-x-10"
+        enterTo="opacity-x-100"
+        leave="transition-opacity duration-700"
+        leaveFrom="opacity-x-100"
+        leaveTo="opacity-x-0"
       >
         {(ref) => (
           <div
@@ -107,17 +104,17 @@ const MobileSidebar = () => {
             )}
             onClick={() => closeSidebar()}
           >
-            <div className='bg-white top-0 w-3/4 h-full absolute left-0'>
-              <div className='w-full flex justify-end px-5 mt-5'>
+            <div className="bg-white top-0 w-3/4 h-full absolute left-0">
+              <div className="w-full flex justify-end px-5 mt-5">
                 <button
                   onClick={() => closeSidebar()}
-                  className='flex justify-end items-end'
+                  className="flex justify-end items-end"
                 >
                   <IoClose size={25} />
                 </button>
               </div>
 
-              <div className='-mt-10'>
+              <div className="-mt-10">
                 <Sidebar />
               </div>
             </div>
@@ -128,20 +125,12 @@ const MobileSidebar = () => {
   );
 };
 
-
-
 function App() {
-
   return (
-
-
-
     <main className="App w-full min-h-screen bg-[#f3f4f6]">
-
       <Router>
-        <Routes >
+        <Routes>
           <Route element={<Layout />}>
-
             <Route path="/" element={<Navigate to="/appointment" />} />
             <Route path="/appointment" element={<Appointment />} />
             <Route path="/encounter" element={<Encounter />} />
@@ -153,20 +142,18 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/history" element={<History />} />
             <Route path="/campaign" element={<Campaign />} />
-
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
           <Route path="/Aform" element={<AppointmentForm />} />
           <Route path="/Apayment" element={<APayment />} />
-          <Route path="/Adetails" element={<AppointmentDetails/>} />
+          <Route path="/Adetails" element={<AppointmentDetails />} />
         </Routes>
 
         <Toaster richColors />
       </Router>
     </main>
-
   );
 }
 
