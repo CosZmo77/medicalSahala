@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleAuthProvider } from "./firebase";
 import { setCredentials } from "../redux/slices/authSlice";
 import logo from "../assets/356f9afdfc8c3aba9175eebc060fc117.png";
 import { Link } from "react-router-dom";
@@ -33,6 +33,22 @@ const Login = () => {
     } catch (error) {
       console.log("error:", error);
       alert("Wrong email or password. Please try again.");
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleAuthProvider);
+
+      if (result.user) {
+        console.log("User signed up with Google:", result.user);
+        dispatch(setCredentials(result.user));
+
+        navigate("/appointment");
+      }
+    } catch (error) {
+      console.error("Google sign-up failed:", error.message);
+      alert("Google sign-up failed. Please try again." + error.message);
     }
   };
 
@@ -125,7 +141,7 @@ const Login = () => {
             <button
               type="button"
               className="flex justify-center items-center px-14 py-2 border border-[#585858] rounded-xl hover:bg-gray-50"
-              // onClick={() => handleSocialSignUp("Google")}
+              onClick={handleGoogleSignUp}
             >
               <FcGoogle className="h-7 w-7" />
             </button>
